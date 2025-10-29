@@ -1,10 +1,23 @@
 const dotenv = require('dotenv')
 const app = require('./app.js')
+const config = require("../src/config/index.js")
+const MongoDB = require("./utils/mongodb.util.js")
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+async function startServer(){
+  try{
+    await MongoDB.connect(config.db.uri);
+    console.log("connect to the database!");
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`);
-});
+    const PORT = config.app.port;
+    app.listen(PORT, () =>{
+      console.log(`server id running on port ${PORT}`)
+    });
+  }catch(error){
+    console.log("cannot connect to the database!", error);
+    process.exit();
+  }
+}
+
+startServer();
